@@ -3,8 +3,7 @@ var CryptoJS = require("crypto-js");
 var crypto = require('crypto');
 const nw = require("./network");
 const ipfsAPI = require('ipfs-api');
-//const ipfs = ipfsAPI('ipfs.infura.io', '5001', {protocol: 'https'})
-var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'}) // leaving out the arguments will default to these values
+ var ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'})  
 
 var newBlock;
 var fs = require("fs");
@@ -70,15 +69,7 @@ var getGenesisBlock = () => {
 };
  
 blockchain = [getGenesisBlock()];
-
-/*switch() {
-    case:
-        blockchain = [getGenesisBlock()];
-        break;
-    case:
-        blockchain = [getGenesisBlock()];
-        break;
-}*/
+ 
 function getBlockchain() { return blockchain; }
 var getLatestBlock = () => blockchain[blockchain.length - 1];
 
@@ -130,8 +121,7 @@ var calculateHashForBlock = (block) => {
     return calculateHash(block.index, block.previousHash, block.timestamp, block.data);
 };
 var addBlock = (newBlock) => {
-    //console.log('Add '+ JSON.stringify(newBlock));
-    if (isValidNewBlock(newBlock, getLatestBlock())) {
+     if (isValidNewBlock(newBlock, getLatestBlock())) {
         
         blockchain.push(newBlock);
     }
@@ -154,8 +144,7 @@ var isValidNewBlock = (newBlock, previousBlock) => {
     return true;
 };
 function getNewBlock() {
-    //console.log('new '+ JSON.stringify(newBlock));
-    return newBlock;
+     return newBlock;
 }
 var replaceChain = (newBlocks) => {
     if (isValidChain(newBlocks) && newBlocks.length > blockchain.length) {

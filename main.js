@@ -43,14 +43,6 @@ var initHttpServer = () => {
     });
     app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
 };
-/*
-if(initialPeers == '') {
-
-}
-else {
-
-}*/
-
 nw.connectToPeers(initialPeers);
 initHttpServer();
 nw.initP2PServer();

@@ -55,42 +55,11 @@ function minusNode() {
     nodeNum--;
 }
 
-/*
-var RequestPBFT = (newBlock) => ({ 
-    'type': MessageType.REQUEST_PREVOTE,
-    'data': newBlock//검증받을 블록
-});
-var RequestCOMMIT = (newBlock) => ({ 
-    'type': MessageType.REQUEST_COMMIT,
-    'data': newBlock//검증받을 블록
-});
-var sendPreVoteMsg = () => ({
-    'type': MessageType.GET_PREVOTE,
-    'data' : 1
 
-});
-var sendNotPreVoteMsg = () => ({
-    'type': MessageType.GET_PREVOTE,
-    'data' : 0
-
-});
-
-var sendCommitMsg = () => ({
-    'type': MessageType.GET_COMMIT,
-    'data' : 1
-
-});
-var sendNotCommitMsg = () => ({
-    'type': MessageType.GET_COMMIT,
-    'data' : 0
-
-});
-*/
 var initMessageHandler = (ws) => {
     ws.on('message', (data) => {
         var message = JSON.parse(data);
-       // console.log('Received message' + JSON.stringify(message));
- 
+  
          switch (message.type) {
             case MessageType.QUERY_LATEST:
                 write(ws, responseLatestMsg());
@@ -101,8 +70,7 @@ var initMessageHandler = (ws) => {
             case MessageType.RESPONSE_BLOCKCHAIN:
                 handleBlockchainResponse(message);
                 break;
-            //검증 노드
-            case MessageType.REQUEST_PREVOTE:
+             case MessageType.REQUEST_PREVOTE:
                 console.log('REQUEST PREVOTE');
              
                 if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
@@ -148,8 +116,7 @@ var initMessageHandler = (ws) => {
                     }
                 }
                 break;
-                //리더 노드
-
+ 
                  case MessageType.REQUEST_COMMIT:
                     if(!leader) {
                     console.log('GET REQUEST COMMIT');
@@ -287,8 +254,7 @@ var write = (ws, message) => ws.send(JSON.stringify(message));
 var broadcast = (message) => sockets.forEach(
 function(socket){
     write(socket, message)
-    //console.log(socket._socket.remotePort);
-    //console.log(process.env.P2P_PORT);
+ 
 });
 
 module.exports = {
@@ -299,5 +265,4 @@ module.exports = {
     initP2PServer,
     selectLeader,
     RequestPBFT
-   // responseValidatedMsg
-};
+ };
