@@ -104,7 +104,7 @@ var generateIPFSBlock = (block) => {
     ipfs.files.add(blockFileBuffer, function (err, file) {
     
         console.log(file)
-        newBlockArray.push(new BlockIPFS(blockIndex,encrypt(file[0].hash, 'public.pem')))
+        newBlockArray.push(new BlockIPFS(blockIndex,file[0].hash))//encrypt(file[0].hash, 'public.pem')))
         if (err) {
         console.log(err);
         }
@@ -114,7 +114,7 @@ var generateIPFSBlock = (block) => {
             console.log('Saved!');
             
             });
-       return new BlockIPFS(blockIndex,encrypt(file[0].hash, encrypt(file[0].hash, 'public.pem'))); 
+       return new BlockIPFS(blockIndex,file[0].hash)//encrypt(file[0].hash, encrypt(file[0].hash, 'public.pem'))); 
 
        });
    
