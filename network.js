@@ -92,12 +92,12 @@ var initMessageHandler = (ws) => {
                     console.log('*LEADER NODE* GET REQUESTED PREVOTE');
                     getMessageCount++;
                     getValidationValue += message.count; 
-                    console.log(getMessageCount);
-                    console.log(nodeNum);
+                    console.log("*LEADER NODE* getMessageCount " + getMessageCount);
+                    console.log("*LEADER NODE* nodeNum " +nodeNum);
                      if(nodeNum == getMessageCount) {
-                        console.log('PREVOTE');
-                        console.log(nodeNum * 2/3 );
+                         console.log("*LEADER NODE* nodeNum " + nodeNum * 2/3 );
                         console.log(getValidationValue);
+                        console.log("*LEADER NODE* getValidationValue is " + getValidationValue);
 
                         if(nodeNum == getValidationValue) {
                             consensus = true;
