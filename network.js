@@ -70,7 +70,7 @@ var initMessageHandler = (ws) => {
             case MessageType.RESPONSE_BLOCKCHAIN:
                 handleBlockchainResponse(message);
                 break;
-             case MessageType.REQUEST_PREVOTE: // PBFT 첫 번째 단계
+             case MessageType.REQUEST_PREVOTE:  
                 console.log('NOT LEADER NODE REQUEST PREVOTE');
              
                 if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
@@ -84,9 +84,9 @@ var initMessageHandler = (ws) => {
 
                 break;
 
-            case MessageType.GET_PREVOTE: // 이후 리더 노드가 Prevote를 받는 단계
+            case MessageType.GET_PREVOTE:  
 
-                if(leader) {
+                if(!leader) {
                     nodeNum = sockets.length - 1;
                     consensus = false;
                     console.log('*LEADER NODE* GET REQUESTED PREVOTE');
@@ -138,7 +138,7 @@ var initMessageHandler = (ws) => {
                     break;
     
                 case MessageType.GET_COMMIT:
-                    if(leader) {
+                    if(!leader) {
                         nodeNum = sockets.length;
                         consensus = false;
                         console.log('*LEADER NODE* COMMIT');
