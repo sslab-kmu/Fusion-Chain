@@ -41,7 +41,8 @@ var initHttpServer = () => {
         nw.connectToPeers([req.body.peer]);
         res.send();
     });
-    
+
+
     app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
 };
 nw.connectToPeers(initialPeers);
