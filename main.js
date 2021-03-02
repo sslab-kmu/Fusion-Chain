@@ -16,8 +16,7 @@ var initHttpServer = () => {
     app.post('/blocks', (req, res) =>  {
             
         fs.readFile('./Blockchain/blockfile' +req.body.index +'.txt','utf8',function(err,data){ 
-            console.log("READ: " + data);
-            console.log(JSON.parse(data)[0].ipfsHash);
+  
             ipfs.files.cat(JSON.parse(data)[0].ipfsHash, function (err, file) {
                 if(err) throw err;
                     console.log(file.toString('utf8'));
@@ -29,10 +28,8 @@ var initHttpServer = () => {
     app.post('/mineBlock', (req, res) => {
         newBlock = bc.generateNextBlock(req.body.data);
         nw.selectLeader(true);
-        console.log('Leader : ' + p2p_port); 
-        nw.broadcast(nw.RequestPBFT(newBlock));
-        console.log('Send Validate');
-        res.send();
+         nw.broadcast(nw.RequestPBFT(newBlock));
+         res.send();
     });
     app.get('/peers', (req, res) => {
          res.send(nw.getSockets().map(s => s._socket.remoteAddress + ':' + s._socket.remotePort));

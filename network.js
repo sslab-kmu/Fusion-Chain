@@ -34,15 +34,13 @@ var connectToPeers = (newPeers) => {
         var ws = new WebSocket(peer);
         ws.on('open', () => initConnection(ws));
         ws.on('error', () => {
-            console.log('connection failed')
-        });
+         });
     });
 };
 var initP2PServer = () => {
     var server = new WebSocket.Server({port: p2p_port});
     server.on('connection', ws => initConnection(ws));
-    console.log('listening websocket p2p port on: ' + p2p_port);
-
+ 
 };
 
 var initConnection = (ws) => {
@@ -71,16 +69,13 @@ var initMessageHandler = (ws) => {
                 handleBlockchainResponse(message);
                 break;
              case MessageType.REQUEST_PREVOTE:  
-                console.log('NOT LEADER NODE REQUEST PREVOTE');
-             
+              
                 if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
                     broadcast(sendPreVoteMsg(message.data));
-                    console.log("NOT LEADER NODE  Line 78: Is valid")
-                }
+                 }
                 else {
                     broadcast(sendNotPreVoteMsg(message.data));
-                    console.log("NOT LEADER NODE Line 82: Is not valid")
-                }
+                 }
 
                 break;
 
@@ -89,15 +84,11 @@ var initMessageHandler = (ws) => {
                 if(!leader) {
                     nodeNum = sockets.length - 1;
                     consensus = false;
-                    console.log('*LEADER NODE* GET REQUESTED PREVOTE');
-                    getMessageCount++;
+                     getMessageCount++;
                     getValidationValue += message.count; 
-                    console.log("*LEADER NODE* getMessageCount " + getMessageCount);
-                    console.log("*LEADER NODE* nodeNum " +nodeNum);
+  
                      if(nodeNum == getMessageCount) {
-                         console.log("*LEADER NODE* nodeNum " + nodeNum * 2/3 );
-                        console.log(getValidationValue);
-                        console.log("*LEADER NODE* getValidationValue is " + getValidationValue);
+           
 
                         if(nodeNum == getValidationValue) {
                             consensus = true;
@@ -106,13 +97,11 @@ var initMessageHandler = (ws) => {
                         if(consensus) { 
 
                             broadcast(RequestCOMMIT(message.data));
-                            console.log('*LEADER NODE* Line 107: Prevote ' + JSON.stringify(bc.getNewBlock()));
-                            getMessageCount = 0;
+                             getMessageCount = 0;
                             getValidationValue = 0;
                          }
                         else { 
-                            console.log('*LEADER NODE* Line 112: Prevote fail ' + JSON.stringify(bc.getNewBlock()));
-                            getMessageCount = 0;
+                             getMessageCount = 0;
                             getValidationValue = 0;
                         }
                     }
@@ -121,19 +110,16 @@ var initMessageHandler = (ws) => {
  
                  case MessageType.REQUEST_COMMIT:
                     if(!leader) {
-                    console.log('NOT LEADER NODE GET REQUEST COMMIT');
-                 
+                  
                         if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
 
                             broadcast(sendCommitMsg());
-                            console.log('NOT LEADER NODE Line 129: Is valid');
-
+ 
                         }
                         else {
 
                             broadcast(sendNotCommitMsg());
-                            console.log('NOT LEADER NODE Line 135: Is valid');
-                        }
+                         }
                     } 
                     break;
     
@@ -141,15 +127,11 @@ var initMessageHandler = (ws) => {
                     if(!leader) {
                         nodeNum = sockets.length;
                         consensus = false;
-                        console.log('*LEADER NODE* COMMIT');
-                        getMessageCount++;
+                         getMessageCount++;
                         getValidationValue += message.data; 
-                        console.log(getMessageCount);
-                        console.log(nodeNum);
+           
                          if(nodeNum == getMessageCount) {
-                            console.log('Consensus ');
-                            console.log(nodeNum * 2/3 );
-                            console.log(getValidationValue);
+                   
     
                             if(nodeNum == getValidationValue) {
                                 consensus = true;
@@ -157,17 +139,14 @@ var initMessageHandler = (ws) => {
                         
                             if(consensus) {
                                 bc.addBlock(bc.getNewBlock());
-                                console.log('new Block: ' + bc.getNewBlock())
-                                bc.generateIPFSBlock(bc.getNewBlock());
+                                 bc.generateIPFSBlock(bc.getNewBlock());
                                 broadcast(responseLatestMsg());
-                                console.log('block added ' + JSON.stringify(bc.getNewBlock()));
-                                getMessageCount = 0;
+                                 getMessageCount = 0;
                                 getValidationValue = 0;
                                 leader = false;
                             }
                             else {
-                                console.log('fail ' + JSON.stringify(bc.getNewBlock()));
-                                getMessageCount = 0;
+                                 getMessageCount = 0;
                                 getValidationValue = 0;
                             }
                         }
@@ -181,8 +160,7 @@ var initMessageHandler = (ws) => {
 
 var initErrorHandler = (ws) => {
     var closeConnection = (ws) => {
-        console.log('connection failed to peer: ' + ws.url);
-        sockets.splice(sockets.indexOf(ws), 1);
+         sockets.splice(sockets.indexOf(ws), 1);
     };
     ws.on('close', () => closeConnection(ws));
     ws.on('error', () => closeConnection(ws));
@@ -193,21 +171,16 @@ var handleBlockchainResponse = (message) => {
     var latestBlockReceived = receivedBlocks[receivedBlocks.length - 1];
     var latestBlockHeld = bc.getLatestBlock();
     if (latestBlockReceived.index > latestBlockHeld.index) {
-        console.log('blockchain possibly behind. We got: ' + latestBlockHeld.index + ' Peer got: ' + latestBlockReceived.index);
-        if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
-            console.log("We can append the received block to our chain");
-            bc.addBlock(latestBlockReceived);
+         if (latestBlockHeld.hash === latestBlockReceived.previousHash) {
+             bc.addBlock(latestBlockReceived);
             broadcast(responseLatestMsg());
         } else if (receivedBlocks.length === 1) {
-            console.log("We have to query the chain from our peer");
-            broadcast(queryAllMsg());
+             broadcast(queryAllMsg());
         } else {
-            console.log("Received blockchain is longer than current blockchain");
-            replaceChain(receivedBlocks);
+             replaceChain(receivedBlocks);
         }
     } else {
-        console.log('received blockchain is not longer than current blockchain. Do nothing');
-    }
+     }
 };
 
 function getSockets() { return sockets; }

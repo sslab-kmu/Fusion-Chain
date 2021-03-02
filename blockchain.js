@@ -31,35 +31,27 @@ class BlockIPFS {
 }
 var blockArray = new Array();
 var getGenesisBlock = () => {
-    //파일에 추가
-        fs.readFile('./Blockchain/blockfile0.txt','utf8',function(err,data){  
+         fs.readFile('./Blockchain/blockfile0.txt','utf8',function(err,data){  
             
-        console.log("READ: " + data);
-        checkFirst = data;
-        console.log('check' + checkFirst);
-        if(process.env.HTTP_PORT == 3001 && checkFirst == "") {
+         checkFirst = data;
+         if(process.env.HTTP_PORT == 3001 && checkFirst == "") {
             
             blockArray.push(new Block(0, "0", 1465154705, "Genesis Block", "816534932c2b7154836da6afc367695e6337db8a921823784c14378abed4f7d7"));
             fs.writeFile('./Blockchain/blockfile0.txt', JSON.stringify(blockArray), function (err) {
                 if (err) throw err;
-                console.log('Saved!');
-            });       
+             });       
             blockArray.length = 0;
             blockFileBuffer = new Buffer(fs.readFile("./Blockchain/blockfile0.txt"));
             ipfs.files.add(blockFileBuffer, function (err, file) {
                 fs.unlink('./Blockchain/blockfile0.txt', function(err){
                     if( err ) throw err;
-                    console.log('file deleted');
-                });
+                 });
                 blockArray.push(new BlockIPFS(0,file[0].hash))
                 if (err) {
-                console.log(err);
-                }
-                console.log(file)
-                fs.writeFile('./Blockchain/blockfile0.txt', JSON.stringify(blockArray), function (err) {
+                 }
+                 fs.writeFile('./Blockchain/blockfile0.txt', JSON.stringify(blockArray), function (err) {
                    if (err) throw err;
-                   console.log('Saved!');
-                   
+                    
                });
                });
         }
@@ -85,25 +77,19 @@ var generateIPFSBlock = (block) => {
     var newBlockArray = new Array();
     var blockIndex = block.index
     newBlockArray.push(block);
-    console.log(block)
-    console.log(block.index)
+ 
 
     blockFileBuffer = new Buffer.from(JSON.stringify(newBlockArray), 'utf8');
-    console.log(blockFileBuffer);
-    newBlockArray.length = 0;
+     newBlockArray.length = 0;
 
     ipfs.files.add(blockFileBuffer, function (err, file) {
     
-        console.log(file)
-        newBlockArray.push(new BlockIPFS(blockIndex,file[0].hash))//encrypt(file[0].hash, 'public.pem')))
+         newBlockArray.push(new BlockIPFS(blockIndex,file[0].hash))//encrypt(file[0].hash, 'public.pem')))
         if (err) {
-        console.log(err);
-        }
-        console.log(file)
-            fs.writeFile('./Blockchain/blockfile'+block.index +'.txt', JSON.stringify(newBlockArray), function (err) {
+         }
+             fs.writeFile('./Blockchain/blockfile'+block.index +'.txt', JSON.stringify(newBlockArray), function (err) {
             if (err) throw err;
-            console.log('Saved!');
-            
+             
             });
        return new BlockIPFS(blockIndex,file[0].hash)//encrypt(file[0].hash, encrypt(file[0].hash, 'public.pem'))); 
 
@@ -128,17 +114,13 @@ var addBlock = (newBlock) => {
 };
 
 var isValidNewBlock = (newBlock, previousBlock) => {
-    console.log('NEW BLOCK: ' + JSON.stringify(newBlock));
-    console.log('PREVIOUS BLOCK: ' + JSON.stringify(previousBlock));
+ 
     if (previousBlock.index + 1 !== newBlock.index) {
-        console.log('invalid index');
-        return false;
+         return false;
     } else if (previousBlock.hash !== newBlock.previousHash) {
-        console.log('invalid previoushash');
-        return false;
+         return false;
     } else if (calculateHashForBlock(newBlock) !== newBlock.hash) {
-        console.log(typeof (newBlock.hash) + ' ' + typeof calculateHashForBlock(newBlock));
-        console.log('invalid hash: ' + calculateHashForBlock(newBlock) + ' ' + newBlock.hash);
+       
         return false;
     }
     return true;
@@ -148,12 +130,10 @@ function getNewBlock() {
 }
 var replaceChain = (newBlocks) => {
     if (isValidChain(newBlocks) && newBlocks.length > blockchain.length) {
-        console.log('Received blockchain is valid. Replacing current blockchain with received blockchain');
-        blockchain = newBlocks;
+         blockchain = newBlocks;
         nw.broadcast(responseLatestMsg());
     } else {
-        console.log('Received blockchain invalid');
-    }
+     }
 };
 
 var isValidChain = (blockchainToValidate) => {
@@ -174,8 +154,7 @@ var isValidChain = (blockchainToValidate) => {
 
 function encrypt(toEncrypt, relativeOrAbsolutePathToPublicKey) {
     const absolutePath = path.resolve(relativeOrAbsolutePathToPublicKey)
-    console.log(absolutePath);
-    const publickey = fs.readFileSync(absolutePath, 'utf8')
+     const publickey = fs.readFileSync(absolutePath, 'utf8')
      const buffer = Buffer.from(toEncrypt)
     const encrypted = crypto.publicEncrypt(   {
         key: publickey.toString(),
