@@ -70,24 +70,26 @@ var initMessageHandler = (ws) => {
             case MessageType.RESPONSE_BLOCKCHAIN:
                 handleBlockchainResponse(message);
                 break;
-             case MessageType.REQUEST_PREVOTE:
-                console.log('REQUEST PREVOTE');
+             case MessageType.REQUEST_PREVOTE: // PBFT 첫 번째 단계
+                console.log('NOT LEADER NODE REQUEST PREVOTE');
              
                 if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
                     broadcast(sendPreVoteMsg(message.data));
+                    console.log("NOT LEADER NODE  Line 78: Is valid")
                 }
                 else {
                     broadcast(sendNotPreVoteMsg(message.data));
+                    console.log("NOT LEADER NODE Line 82: Is not valid")
                 }
 
                 break;
 
-            case MessageType.GET_PREVOTE:
+            case MessageType.GET_PREVOTE: // 이후 리더 노드가 Prevote를 받는 단계
 
-                if(!leader) {
+                if(leader) {
                     nodeNum = sockets.length - 1;
                     consensus = false;
-                    console.log('GET REQUESTED PREVOTE');
+                    console.log('*LEADER NODE* GET REQUESTED PREVOTE');
                     getMessageCount++;
                     getValidationValue += message.count; 
                     console.log(getMessageCount);
@@ -104,12 +106,12 @@ var initMessageHandler = (ws) => {
                         if(consensus) { 
 
                             broadcast(RequestCOMMIT(message.data));
-                            console.log('Prevote ' + JSON.stringify(bc.getNewBlock()));
+                            console.log('*LEADER NODE* Line 107: Prevote ' + JSON.stringify(bc.getNewBlock()));
                             getMessageCount = 0;
                             getValidationValue = 0;
                          }
                         else { 
-                            console.log('Prevote fail ' + JSON.stringify(bc.getNewBlock()));
+                            console.log('*LEADER NODE* Line 112: Prevote fail ' + JSON.stringify(bc.getNewBlock()));
                             getMessageCount = 0;
                             getValidationValue = 0;
                         }
@@ -119,15 +121,18 @@ var initMessageHandler = (ws) => {
  
                  case MessageType.REQUEST_COMMIT:
                     if(!leader) {
-                    console.log('GET REQUEST COMMIT');
+                    console.log('NOT LEADER NODE GET REQUEST COMMIT');
                  
                         if (bc.isValidNewBlock(message.data, bc.getLatestBlock())) {
 
                             broadcast(sendCommitMsg());
+                            console.log('NOT LEADER NODE Line 129: Is valid');
+
                         }
                         else {
 
                             broadcast(sendNotCommitMsg());
+                            console.log('NOT LEADER NODE Line 135: Is valid');
                         }
                     } 
                     break;
@@ -136,7 +141,7 @@ var initMessageHandler = (ws) => {
                     if(leader) {
                         nodeNum = sockets.length;
                         consensus = false;
-                        console.log('GET');
+                        console.log('*LEADER NODE* COMMIT');
                         getMessageCount++;
                         getValidationValue += message.data; 
                         console.log(getMessageCount);

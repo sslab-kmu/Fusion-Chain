@@ -7,8 +7,8 @@ var p2p_port = process.env.P2P_PORT || 6001;
 var initialPeers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 const nw = require("./network");
 const bc = require("./blockchain");
-var fs = require("fs");
-  
+var fs = require("fs");  
+   
 var initHttpServer = () => {
     
     var app = express();
@@ -20,16 +20,16 @@ var initHttpServer = () => {
             console.log(JSON.parse(data)[0].ipfsHash);
             ipfs.files.cat(JSON.parse(data)[0].ipfsHash, function (err, file) {
                 if(err) throw err;
-                console.log(file.toString('utf8'));
+                    console.log(file.toString('utf8'));
                 res.send(file.toString('utf8'));
             });
-        });
+        }); 
     });
+
     app.post('/mineBlock', (req, res) => {
         newBlock = bc.generateNextBlock(req.body.data);
-        
         nw.selectLeader(true);
-        console.log('Leader : ' + p2p_port);
+        console.log('Leader : ' + p2p_port); 
         nw.broadcast(nw.RequestPBFT(newBlock));
         console.log('Send Validate');
         res.send();
@@ -41,6 +41,7 @@ var initHttpServer = () => {
         nw.connectToPeers([req.body.peer]);
         res.send();
     });
+    
     app.listen(http_port, () => console.log('Listening http on port: ' + http_port));
 };
 nw.connectToPeers(initialPeers);

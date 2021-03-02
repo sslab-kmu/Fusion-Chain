@@ -88,7 +88,7 @@ var generateIPFSBlock = (block) => {
     console.log(block)
     console.log(block.index)
 
-    blockFileBuffer = new Buffer(JSON.stringify(newBlockArray));
+    blockFileBuffer = new Buffer.from(JSON.stringify(newBlockArray), 'utf8');
     console.log(blockFileBuffer);
     newBlockArray.length = 0;
 
